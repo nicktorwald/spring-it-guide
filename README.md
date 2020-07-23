@@ -27,3 +27,23 @@ As the start point, we have a test environment where the required services are i
 - sluggish
 - dependent on pre-configured external services
 - hard supported (multi-usage, updates, dynamic deployments and so on)
+
+## Evolution 0
+
+Avoid any integrations with external services. Use *test doubles* (mock/fake/stub objects) to simulate behaviour of the
+target services.
+
+```shell
+$ docker image build -t nicktorwald/quotation-service:evol0 .
+$ docker container run --rm -it nicktorwald/quotation-service:evol0 verify
+```
+
+### Props:
+
+- fastest
+- autonomous (free of any external dependencies)
+
+### Cons:
+
+- untrustworthy (it doesn't show a real picture)
+- fully incompatible with the target environment
