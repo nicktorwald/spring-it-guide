@@ -1,0 +1,11 @@
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/quotation
+    username: quser
+    password: oBrPvKlm5wvh
+
+  flyway:
+    locations: classpath:migration
+    url: jdbc:postgresql://localhost:5432/quotation
+    user: quser
+    password: oBrPvKlm5wvh

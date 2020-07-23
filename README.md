@@ -1,2 +1,29 @@
-# spring-it-guide
-A short demo how integration tests can be run without an external environment
+# A short guide how to cook integration tests
+
+This is an additional repo that is used for demonstration purposes at SibEdge.
+
+## How to use this guide
+
+This tutorial evolves within a number of commits where each commit improves the solution in terms of performance,
+maintainability, and security.
+
+To try it out, check out a particular commit from the `master` branch. It will roll back you to the needed evolution
+state.
+
+## Prerequisites
+
+We've developed yet another service which requires a PostgreSQL instance to store and retrieve quotations. We want to
+provide integration tests to be sure all the stuff is OK.
+
+As the start point, we have a test environment where the required services are installed.
+
+### Props:
+
+- closest to a production usage
+- trustworthy in terms test results
+
+### Cons:
+
+- sluggish
+- dependent on pre-configured external services
+- hard supported (multi-usage, updates, dynamic deployments and so on)
