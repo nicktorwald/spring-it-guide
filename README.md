@@ -47,3 +47,24 @@ $ docker container run --rm -it nicktorwald/quotation-service:evol0 verify
 
 - untrustworthy (it doesn't show a real picture)
 - fully incompatible with the target environment
+
+## Evolution 1
+
+Use embedded databases for testing like *H2* and so on.
+
+```shell
+$ docker image build -t nicktorwald/quotation-service:evol1 .
+$ docker container run --rm -it nicktorwald/quotation-service:evol1 verify
+```
+
+### Props:
+
+- fast
+- closer to the target environment
+- autonomous
+
+### Cons:
+
+- still, not trustworthy enough
+- not fully compatible with the target environment
+- non-existing for many other solutions

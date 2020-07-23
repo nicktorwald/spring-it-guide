@@ -9,8 +9,6 @@ import reactor.core.publisher.Mono;
 /**
  * A fake in-memory quotation modifier.
  */
-@Primary
-@Component
 class InMemoryQuotationModifier implements QuotationModifier {
 
     @Override
