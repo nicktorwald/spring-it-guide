@@ -10,6 +10,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.nicktorwald.platform.quotation.config.TestQuotationConfig;
 import org.nicktorwald.platform.quotation.endpoint.QuotationView;
 import org.nicktorwald.platform.quotation.service.domain.Quotation;
 import org.nicktorwald.platform.quotation.util.QuotationPopulator;
@@ -25,7 +26,10 @@ import org.springframework.web.util.UriBuilder;
  * @see org.nicktorwald.platform.quotation.service.ListQuotationsCase
  */
 @ActiveProfiles("test")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        classes = TestQuotationConfig.class
+)
 class ListQuotationsCaseIT {
 
     private final QuotationPopulator fetcherPopulator;

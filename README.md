@@ -68,3 +68,23 @@ $ docker container run --rm -it nicktorwald/quotation-service:evol1 verify
 - still, not trustworthy enough
 - not fully compatible with the target environment
 - non-existing for many other solutions
+
+## Evolution 2
+
+Use portable database forks for testing (i.e. Embedded PostgreSQL Server by Yandex).
+
+```shell
+$ docker image build -t nicktorwald/quotation-service:evol2 .
+$ docker container run --rm -it nicktorwald/quotation-service:evol2 verify
+```
+
+### Props:
+
+- (almost) fully compatible
+- autonomous
+
+### Cons:
+
+- slow enough
+- usually dependent on the unofficial communities (may be outdated, archived, frozen etc.)
+- non-existing for many other solutions
