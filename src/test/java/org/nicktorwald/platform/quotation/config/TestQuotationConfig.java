@@ -1,20 +1,12 @@
 package org.nicktorwald.platform.quotation.config;
 
-import java.io.IOException;
-
-import de.flapdoodle.embed.process.runtime.Network;
 import io.r2dbc.spi.ConnectionFactoryOptions;
 import org.springframework.boot.autoconfigure.flyway.FlywayConfigurationCustomizer;
 import org.springframework.boot.autoconfigure.r2dbc.ConnectionFactoryOptionsBuilderCustomizer;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
-import ru.yandex.qatools.embed.postgresql.PostgresExecutable;
-import ru.yandex.qatools.embed.postgresql.PostgresProcess;
-import ru.yandex.qatools.embed.postgresql.PostgresStarter;
-import ru.yandex.qatools.embed.postgresql.config.AbstractPostgresConfig;
-import ru.yandex.qatools.embed.postgresql.config.PostgresConfig;
-import ru.yandex.qatools.embed.postgresql.distribution.Version;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 /**
  * Configures an additional persistent components.
@@ -22,52 +14,45 @@ import ru.yandex.qatools.embed.postgresql.distribution.Version;
 @TestConfiguration
 public class TestQuotationConfig {
 
-    @Bean(destroyMethod = "stop")
-    public PostgresProcess postgresProcess(PostgresConfig config) throws IOException {
-        PostgresStarter<PostgresExecutable, PostgresProcess> runtime = PostgresStarter.getDefaultInstance();
-        PostgresExecutable exec = runtime.prepare(config);
-        return exec.start();
+    @Bean
+    public PostgreSQLContainer<?> postgresContainer() {
+        final PostgreSQLContainer<?> postgresContainer =
+                new PostgreSQLContainer<>("postgres:10.6")
+                        .withExposedPorts(5432)
+                        .withDatabaseName("quotation")
+                        .withUsername("quser")
+                        .withPassword("pa$$vv0rd");
+        postgresContainer.start();
+        return postgresContainer;
     }
 
     @Bean
-    public PostgresConfig postgresConfig() throws IOException {
-        return new PostgresConfig(
-                Version.V10_6,
-                new AbstractPostgresConfig.Net("localhost", Network.getFreeServerPort()),
-                new AbstractPostgresConfig.Storage("quotation"),
-                new AbstractPostgresConfig.Timeout(),
-                new AbstractPostgresConfig.Credentials("quser", "pa$$vv0rd")
-        );
-    }
-
-    @Bean
-    @DependsOn("postgresProcess")
-    public ConnectionFactoryOptionsBuilderCustomizer connectionFactoryPortCustomizer(PostgresConfig config) {
-        var network = config.net();
-        var storage = config.storage();
-        var credentials = config.credentials();
+    @DependsOn("postgresContainer")
+    public ConnectionFactoryOptionsBuilderCustomizer connectionFactoryPortCustomizer(PostgreSQLContainer<?> container) {
+        var host = container.getHost();
+        var port = container.getMappedPort(5432);
+        var databaseName = container.getDatabaseName();
+        var username = container.getUsername();
+        var password = container.getPassword();
         return (builder) -> {
             builder
-                    .option(ConnectionFactoryOptions.HOST, network.host())
-                    .option(ConnectionFactoryOptions.PORT, network.port())
-                    .option(ConnectionFactoryOptions.DATABASE, storage.dbName())
-                    .option(ConnectionFactoryOptions.USER, credentials.username())
-                    .option(ConnectionFactoryOptions.PASSWORD, credentials.password());
+                    .option(ConnectionFactoryOptions.HOST, host)
+                    .option(ConnectionFactoryOptions.PORT, port)
+                    .option(ConnectionFactoryOptions.DATABASE, databaseName)
+                    .option(ConnectionFactoryOptions.USER, username)
+                    .option(ConnectionFactoryOptions.PASSWORD, password);
         };
     }
 
     @Bean
-    @DependsOn("postgresProcess")
-    public FlywayConfigurationCustomizer flywayConfigurationCustomizer(PostgresConfig config) {
-        var network = config.net();
-        var credentials = config.credentials();
-        var storage = config.storage();
+    @DependsOn("postgresContainer")
+    public FlywayConfigurationCustomizer flywayConfigurationCustomizer(PostgreSQLContainer<?> container) {
+        var jdbcUrl = container.getJdbcUrl();
+        var username = container.getUsername();
+        var password = container.getPassword();
         return (configuration) -> {
-            configuration.dataSource(
-                    String.format("jdbc:postgresql://%s:%s/%s", network.host(), network.port(), storage.dbName()),
-                    credentials.username(),
-                    credentials.password()
-            );
+            configuration.dataSource(jdbcUrl, username, password);
         };
     }
+
 }

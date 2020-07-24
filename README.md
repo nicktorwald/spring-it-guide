@@ -88,3 +88,24 @@ $ docker container run --rm -it nicktorwald/quotation-service:evol2 verify
 - slow enough
 - usually dependent on the unofficial communities (may be outdated, archived, frozen etc.)
 - non-existing for many other solutions
+
+## Evolution 3
+
+Use dynamically started environment via Docker and Testcontainers.
+
+```shell
+$ docker image build -t nicktorwald/quotation-service:evol3 .
+$ docker container run -v /var/run/docker.sock:/var/run/docker.sock \
+    --rm -it nicktorwald/quotation-service:evol3 verify
+```
+
+### Props:
+
+- fully compatible
+- as trustworthy as it can be
+- autonomous
+- suitable for any solutions
+
+### Cons:
+
+- slow enough
